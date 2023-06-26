@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright 2015-2020, Intel Corporation
+#
+
+#
+# src/test/out_err_mt/TEST2 -- unit test for error messages
+#
+
+. ../unittest/unittest.sh
+
+require_test_type medium
+require_fs_type any
+disable_eatmydata
+
+require_valgrind 3.7
+configure_valgrind helgrind force-enable
+
+setup
+
+unset PMEM_LOG_LEVEL
+unset PMEMLOG_LOG_LEVEL
+unset PMEMBLK_LOG_LEVEL
+unset PMEMOBJ_LOG_LEVEL
+
+unset PMEM_LOG_FILE
+unset PMEMLOG_LOG_FILE
+unset PMEMBLK_LOG_FILE
+unset PMEMOBJ_LOG_FILE
+
+expect_normal_exit ./out_err_mt$EXESUFFIX $DIR/testfile1 $DIR/testfile2\
+			$DIR/testfile3 $DIR/testfile4 $DIR
+
+check
+
+pass
