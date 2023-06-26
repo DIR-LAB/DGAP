@@ -1,0 +1,8 @@
+.vscode/
+bin/
+results/
+baselines/GraphOne-D/
+baselines/GraphOne-P/
+*.txt
+*.csv
+*.idea
