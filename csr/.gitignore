@@ -1,0 +1,20 @@
+# executables
+bc
+bfs
+cc
+converter
+pr
+sssp
+tc
+
+# graph data
+test/out/*.out
+
+benchmark/out/*.out
+benchmark/graphs/*.sg
+benchmark/graphs/*.wsg
+benchmark/graphs/raw/*
+
+# ide specific settings
+.idea
+.vscode
