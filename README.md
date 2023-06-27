@@ -172,13 +172,10 @@ The GAPBS framework expects `.el` as the default file extension for the unweight
 LLAMA and XPGraph expect the file extension `.net` and `.bin` respectively.
 
 1. **Prepare Datasets for CSR**: CSR expect a single input graph file in edge graph format. Users just need to convert any ordered edge graph datasets to a randomly shuffled dataset. We provide `shuffle_dataset` command to do that.
-2. **Prepare Datasets for DGAP/BAL/GraphOne**. These systems expect two input files for each of the graph datasets:
+2. **Prepare Datasets for DGAP/BAL/GraphOne**. These systems expect two input files (base graph and dynamic graph) for each of the graph datasets. The dataset is in edge graph format, and these files collectively represent the whole graph. Users need to convert any edge graph datasets into two files: the base-graph-output and dynamic-graph-output. Depends on the original graph file format (edge format or adjaccency format), we provide two different commands: `split_dataset` and `adj_to_el_converter`
 
 - **.base.el** (10% base graph file)
 - **.dynamic.el** (dynamic graph file).
-
-The dataset is in edge graph format, and these files collectively represent the whole graph.
-Users need to convert any edge graph datasets into two files: the base-graph-output and dynamic-graph-output. Depends on the original graph file format (edge format or adjaccency format), we provide two different commands: `split_dataset` and `adj_to_el_converter`
 
 3. **Prepare Datasets for LLAMA**. LLAMA uses a multi-versioned CSR structure to enable fast graph analysis and graph mutations. The graph updates are conducted in batch and organized as multiple immutable snapshots in LLAMA. LLAMA expect multiple input files in edge graph format. For each of these input files, LLAMA creates a single snapshot.
 In our evaluation, we create a snapshot after inserting each 1% of the dynamic graphs. Hence users need to split their dynamic graph files (that we prepared for DGAP, BAL, and GraphOne) into multiple pieces to evaluate LLAMA. We provide a command `create_llama_dataset` for this purpose.
