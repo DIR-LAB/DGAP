@@ -144,9 +144,11 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 
 ## 2. Input Graph Datasets
 
-Since different graph processing frameworks read dynamic graphs differently. To compare them, we have to do series of data preprocessing first. Please check the [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) for more details. 
+Since different graph processing frameworks read dynamic graphs differently. To compare them, we have to do series of data preprocessing first. 
 
-Here, we briefly discuss some basic concepts before moving to [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) page.
+The details are described in a separate page: [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md).
+
+Before moving to that page, we briefly discuss some basic concepts here.
 
 ### Graph Properties
 * **Direction of the graph:** Currently DGAP and all the competitors only store the out-going edges of the graph. Few graph algorithms implemented in the [GAP Benchmark Suite (GAPBS)](https://github.com/sbeamer/gapbs) expect to access both the in and out-going edges.
