@@ -88,16 +88,6 @@ Here we shared the step-by-step process to preprocess the datasets:
 > ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
 ```
 
-**Step 5:** Preprocess the raw files for DGAP/BAL/GraphOne. Example:
-
-```
-## if the raw graph in edge graph format
-> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
-
-## if the raw graph in adjacency graph format
-> ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
-```
-
 **Step 6:** Preprocess the dynamic graph files for LLAMA. Here we will use the dynamic graph files generated in `Step 5` as the input of the preprocessor. Example:
 
 ```

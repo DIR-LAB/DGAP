@@ -181,39 +181,31 @@ Furthermore, the edges of some datasets are ordered by source vertices, such as 
 For better performance testing, we provide several scripts to modify the raw input data for our evaluation by removing the "self-loops" and "redundant edges", including the reverse edges, and shuffle the edges randomly.
 
 ```
-[TBA]
-> cd preprocess
+> cd DGAP/preprocess
 > make
 
 ## Randomly shuffle a dataset (input in edge graph format)
-> 
+> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-inout-file]
 
 ## Split a dataset to base and dynamic graph (input in edge graph format)
-> 
+> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
+
+## Split a dataset to base and dynamic graph (input in adjacency graph format)
+> ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
 
 ## Split a dataset for llama (input in edge graph format)
-> 
+> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-inout-file] [number-of-splits]
 
-## Convert adjacency graph to edge graph (input in adjacency graph format)
-> 
-
-## Convert weighted graph to unweighted graph (input in edge graph format)
-> 
-
-## Split a large text file
-$ split -[splitline] [path_to_txt/data.txt]
-
-## Shuffle a ordered text file
-$ python preprocess/shuffle.py -i [path_to_txt/data.txt] -o [path_to_txt/data_shuffle.txt] -v [nverts]
+## Convert edge graph from text format to binary format (input in edge graph in text format)
+> ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
 ```
 
 #### Prepare Datasets for CSR
 
 CSR expect a single input graph file in edge graph format. User can use the following script to convert any ordered edge graph datasets to a randomly shuffled dataset:
 ```
-[TBA]
 ## Randomly shuffle a dataset (input in edge graph format)
-> 
+> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-inout-file]
 ```
 
 #### Prepare Datasets for DGAP/BAL/GraphOne
@@ -227,9 +219,11 @@ The dataset is in edge graph format, and these files collectively represent the 
 User can use the following script to convert any edge graph datasets into two files:
 
 ```
-[TBA]
-## Randomly shuffle a dataset (input in edge graph format)
-> 
+## if the raw graph in edge graph format
+> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
+
+## if the raw graph in adjacency graph format
+> ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
 ```
 
 #### Prepare Datasets for LLAMA
@@ -240,21 +234,19 @@ In our evaluation, we create a snapshot after inserting each 1% of the dynamic g
 For convenience, we provide a script to split our dynamic graph files (that we prepared for DGAP, BAL, and GraphOne) into multiple pieces to evaluate LLAMA:
 
 ```
-[TBA]
-> ./text2bin [path_to_txt/data.txt] [path_to_binary/data.bin]
+> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-inout-file] [number-of-splits]
 ```
 
 #### Prepare Datasets for XPGraph
 XPGraph expects edge graph files in binary format. The authors of XPGraph provided a script to convert the input data from text format to binary format. We used their script to convert our edge graphs from text format to binary format.
 
 ```
-[TBA]
-> ./text2bin [path_to_txt/data.txt] [path_to_binary/data.bin]
+> ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
 ```
 
 ## Usage
 
-One of the key motivations of this project is to allow others to reuse our DGAP implementation for performance comparison. We provide detailed build and run instructions for DGAP and all the competitors in the corresponding sub-directories.
+One of the key motivations of this project is to allow others to reuse our DGAP implementation for performance comparison. We provide detailed build and run instructions for DGAP and all the competitors in the corresponding sub-directories. Before running the benchmark, please follow [this directory structure](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) to store the input graphs. Then, run `benchmark_xxx.sh` scripts in each directory to reproduce the results of DGAP and all the competitors.
 
 ## Contribution
 
