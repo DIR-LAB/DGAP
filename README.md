@@ -144,7 +144,7 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 
 ## 2. Input Graph Datasets
 
-DGAP provides interfaces to ingest graph data from edge list files. In the paper, we reported DGAP’s performance on the following six input graphs:
+DGAP provides interfaces to ingest graph data from edge list files. In the paper, we reported DGAP’s performance on the following six input graphs (Click each link to download the graph):
 1. [Orkut](https://snap.stanford.edu/data/com-Orkut.html)
 2. [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html)
 3. [CitPatents](https://snap.stanford.edu/data/cit-Patents.html)
