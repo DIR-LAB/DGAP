@@ -3,6 +3,8 @@
 
 This repo includes the source code of DGAP along with other state-of-the-art dynamic graph processing systems (LLAMA [2], GraphOne [3], and XP-Graph [4]) and data structures (CSR, and BAL), which are ported to run on persistent memory. It also includes PMDK (v1.12.1) with necessary changes required in DGAP (please check in [changes in PMDK](#changes-in-pmdk) for more details).
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8087836.svg)](https://doi.org/10.5281/zenodo.8087836)
+
 ## Citing DGAP:
 
 ```
