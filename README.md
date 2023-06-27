@@ -144,22 +144,16 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 
 ## 2. Input Graph Datasets
 
-DGAP provides interfaces to ingest graph data from edge list files. In the paper, we reported DGAP’s performance on the following six input graphs (Click each link to download the graph):
-1. [Orkut](https://snap.stanford.edu/data/com-Orkut.html)
-2. [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html)
-3. [CitPatents](https://snap.stanford.edu/data/cit-Patents.html)
-4. [Twitter](https://github.com/ANLAB-KAIST/traces/releases/tag/twitter_rv.net)
-5. [Friendster](https://snap.stanford.edu/data/com-Friendster.html)
-6. [Protein](https://www.dropbox.com/scl/fi/kx883cz7d5w8p8n346nr0/protein.adj?dl=0&rlkey=6voyszorfex9lrb2edja4w65y)
+Since different graph processing frameworks read dynamic graphs differently. To compare them, we have to do series of data preprocessing first. Please check the [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) for more details. 
+
+Here, we briefly discuss some basic concepts before moving to [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) page.
 
 ### Graph Properties
 * **Direction of the graph:** Currently DGAP and all the competitors only store the out-going edges of the graph. Few graph algorithms implemented in the [GAP Benchmark Suite (GAPBS)](https://github.com/sbeamer/gapbs) expect to access both the in and out-going edges.
     * We solve this problem by inserting the inverse edges for the directed graph datasets.
-      * One can use our provided scripts to include the reverse edges and shuffle the edges randomly. Please check section [Prepare Datasets](#prepare-datasets) for details.
-    * Another way to solve this problem is to initiate two data structure instances to store both the in and out-going edges. We consider this as a future extension.
-* **Weighted/Property of the graph:** Currently DGAP and all the competitors stores the unweighted graphs. We plan to add support for weighted/property graphs in the future. Please check the [Supported Graph Data Format](#supported-graph-data-format) for details.
+* **Weighted/Property of the graph:** Currently DGAP and all the competitors stores the unweighted graphs. We plan to add support for weighted/property graphs in the future.
 
-### Supported Graph Data Format
+### Graph Data Format and Conversion
 All the dynamic graph processing systems (included in this repository) expect the input graphs in the **edge-list format**. So, for example, the data will look like the following:
 
 ```
@@ -173,40 +167,14 @@ All the dynamic graph processing systems (included in this repository) expect th
 ```
 
 The GAPBS framework expects `.el` as the default file extension for the unweighted input graphs. So, we used `.el` file extension for DGAP, BAL, CSR, and GraphOne.
-LLAMA and XPGraph expect the file extension `.net` and `.bin` respectively. Please check section [Prepare Datasets](#prepare-datasets) for details.
-
-### Prepare Datasets
-
-Typically, the downloaded datasets are text files in edge or adjacency graph format.
-Furthermore, the edges of some datasets are ordered by source vertices, such as Twitter, Protein, etc. that we used in our evaluation.
-For better performance testing, we provide several scripts to modify the raw input data for our evaluation by removing the "self-loops" and "redundant edges", including the reverse edges, and shuffle the edges randomly.
-
-```
-> cd DGAP/preprocess
-> make
-
-## Randomly shuffle a dataset (input in edge graph format)
-> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-inout-file]
-
-## Split a dataset to base and dynamic graph (input in edge graph format)
-> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
-
-## Split a dataset to base and dynamic graph (input in adjacency graph format)
-> ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
-
-## Split a dataset for llama (input in edge graph format)
-> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-inout-file] [number-of-splits]
-
-## Convert edge graph from text format to binary format (input in edge graph in text format)
-> ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
-```
+LLAMA and XPGraph expect the file extension `.net` and `.bin` respectively.
 
 #### Prepare Datasets for CSR
 
 CSR expect a single input graph file in edge graph format. User can use the following script to convert any ordered edge graph datasets to a randomly shuffled dataset:
 ```
 ## Randomly shuffle a dataset (input in edge graph format)
-> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-inout-file]
+> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-input-file]
 ```
 
 #### Prepare Datasets for DGAP/BAL/GraphOne
@@ -221,7 +189,7 @@ User can use the following script to convert any edge graph datasets into two fi
 
 ```
 ## if the raw graph in edge graph format
-> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
+> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-input-file]
 
 ## if the raw graph in adjacency graph format
 > ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
@@ -235,7 +203,7 @@ In our evaluation, we create a snapshot after inserting each 1% of the dynamic g
 For convenience, we provide a script to split our dynamic graph files (that we prepared for DGAP, BAL, and GraphOne) into multiple pieces to evaluate LLAMA:
 
 ```
-> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-inout-file] [number-of-splits]
+> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-input-file] [number-of-splits]
 ```
 
 #### Prepare Datasets for XPGraph
@@ -244,6 +212,8 @@ XPGraph expects edge graph files in binary format. The authors of XPGraph provid
 ```
 > ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
 ```
+
+Again, more details can be seen at [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) page.
 
 ## 3. Run the Benchmarks
 
