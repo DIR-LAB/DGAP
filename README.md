@@ -52,7 +52,7 @@ At the high level, DGAP repository structure looks like this:
 ## 1. Build Binaries
 The code has been implemented in C++ and tested on Ubuntu 20.04 with CMake 3.13.4 and gcc 9.4.0.
 
-### Software Prerequisites
+### 1.1 Software Prerequisites
 * C++11 compiler
 * OpenMP
 * CMake 3.13.4
@@ -60,7 +60,7 @@ The code has been implemented in C++ and tested on Ubuntu 20.04 with CMake 3.13.
 * PMDK (v1.12.1 or later with changes, please check section [Changes in PMDK](#changes-in-pmdk) for details)
 * Python 3.8.10
 
-### Hardware Prerequisites
+### 1.2 Hardware Prerequisites
 We evaluated DGAP with the following machine configuration.
 * Server: Dell R740 rack server
 * CPU: 2nd generation Intel Xeon Scalable Processor (Gold 6254 @ 3.10 GHz) with 18 physical cores
@@ -71,7 +71,7 @@ We evaluated DGAP with the following machine configuration.
 
 DGAP is not yet optimized for multi-socket processors, so we recommend using a single-socket machine or a similar setting to reproduce similar results in the paper. Also, while DGAP runs on any persistent memory device, its high performance is best judged when running on Intel Optane DC Persistent Memory. If desired, we will provide proper guidelines to access our testbed.
 
-### Changes in PMDK
+### 1.3 Changes in PMDK
 Current DGAP implementation is based on PMDK 1.12 (we use the PMDK library only for memory management/allocation purposes).
 PMDK has a known limitation in single object memory allocation larger than *0x3FFDFFFC0* bytes (around 16 GB), as the current implementation `does not support cross-zone allocation`.
 In DGAP, the *edge array* is allocated as a single object and might require larger space than is allowed by PMDK (~16 GB) for larger graphs.
@@ -97,7 +97,7 @@ Installing PMDK using our source repository:
 > sudo make install prefix=/usr/local
 ```
 
-### Build & Run
+### 1.4 Build & Run
 **Step 1:** Clone the repository:
 ```
 > git clone https://github.com/DIR-LAB/DGAP.git
@@ -127,7 +127,7 @@ Please note that, to test concurrent graph insertion and analysis performance, u
 
 **Step 5:** Reproduce results that we included in our paper. (TBA)
 
-### Graph Kernels Included
+### 1.5 Graph Kernels Included
 For a fair comparison, we integrate the following graph algorithms from the GAP Benchmark Suite (GAPBS) into DGAP and all the competitors.
 
 + Breadth-First Search (BFS) - direction optimizing
@@ -148,14 +148,14 @@ Since different graph processing frameworks read dynamic graphs differently. To 
 
 The details are described in a separate page: [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md).
 
-Before moving to that page, we briefly discuss some basic concepts here.
+Before moving to that page, we discuss some basic concepts here.
 
-### Graph Properties
+### 2.1 Graph Properties
 * **Direction of the graph:** Currently DGAP and all the competitors only store the out-going edges of the graph. Few graph algorithms implemented in the [GAP Benchmark Suite (GAPBS)](https://github.com/sbeamer/gapbs) expect to access both the in and out-going edges.
     * We solve this problem by inserting the inverse edges for the directed graph datasets.
 * **Weighted/Property of the graph:** Currently DGAP and all the competitors stores the unweighted graphs. We plan to add support for weighted/property graphs in the future.
 
-### Graph Data Format and Conversion
+### 2.2 Graph Data Format and Conversion
 All the dynamic graph processing systems (included in this repository) expect the input graphs in the **edge-list format**. So, for example, the data will look like the following:
 
 ```
@@ -171,49 +171,19 @@ All the dynamic graph processing systems (included in this repository) expect th
 The GAPBS framework expects `.el` as the default file extension for the unweighted input graphs. So, we used `.el` file extension for DGAP, BAL, CSR, and GraphOne.
 LLAMA and XPGraph expect the file extension `.net` and `.bin` respectively.
 
-#### Prepare Datasets for CSR
+1. **Prepare Datasets for CSR**: CSR expect a single input graph file in edge graph format. Users just need to convert any ordered edge graph datasets to a randomly shuffled dataset. We provide `shuffle_dataset` command to do that.
+2. **Prepare Datasets for DGAP/BAL/GraphOne**. These systems expect two input files for each of the graph datasets:
 
-CSR expect a single input graph file in edge graph format. User can use the following script to convert any ordered edge graph datasets to a randomly shuffled dataset:
-```
-## Randomly shuffle a dataset (input in edge graph format)
-> ./shuffle_dataset [path-to-input-file]/input.el [path-to-output-file]/output.el [number-of-lines-in-input-file]
-```
-
-#### Prepare Datasets for DGAP/BAL/GraphOne
-
-DGAP, BAL, and GraphOne expect two input files for each of the graph datasets:
-
-1. **.base.el** (10% base graph file)
-2. **.dynamic.el** (dynamic graph file).
+- **.base.el** (10% base graph file)
+- **.dynamic.el** (dynamic graph file).
 
 The dataset is in edge graph format, and these files collectively represent the whole graph.
-User can use the following script to convert any edge graph datasets into two files:
+Users need to convert any edge graph datasets into two files: the base-graph-output and dynamic-graph-output. Depends on the original graph file format (edge format or adjaccency format), we provide two different commands: `split_dataset` and `adj_to_el_converter`
 
-```
-## if the raw graph in edge graph format
-> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-input-file]
+3. **Prepare Datasets for LLAMA**. LLAMA uses a multi-versioned CSR structure to enable fast graph analysis and graph mutations. The graph updates are conducted in batch and organized as multiple immutable snapshots in LLAMA. LLAMA expect multiple input files in edge graph format. For each of these input files, LLAMA creates a single snapshot.
+In our evaluation, we create a snapshot after inserting each 1% of the dynamic graphs. Hence users need to split their dynamic graph files (that we prepared for DGAP, BAL, and GraphOne) into multiple pieces to evaluate LLAMA. We provide a command `create_llama_dataset` for this purpose.
 
-## if the raw graph in adjacency graph format
-> ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
-```
-
-#### Prepare Datasets for LLAMA
-LLAMA uses a multi-versioned CSR structure to enable fast graph analysis and graph mutations.
-The graph updates are conducted in batch and organized as multiple immutable snapshots in LLAMA.
-LLAMA expect multiple input files in edge graph format. For each of these input files, LLAMA creates a single snapshot.
-In our evaluation, we create a snapshot after inserting each 1% of the dynamic graphs.
-For convenience, we provide a script to split our dynamic graph files (that we prepared for DGAP, BAL, and GraphOne) into multiple pieces to evaluate LLAMA:
-
-```
-> ./create_llama_dataset [path-to-input-dynamic-graph-file]/input.dynamic.el [directory-path-to-output-file]/ [number-of-lines-in-input-file] [number-of-splits]
-```
-
-#### Prepare Datasets for XPGraph
-XPGraph expects edge graph files in binary format. The authors of XPGraph provided a script to convert the input data from text format to binary format. We used their script to convert our edge graphs from text format to binary format.
-
-```
-> ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
-```
+4. **Prepare Datasets for XPGraph**. XPGraph reads edge graph files in binary format. The authors of XPGraph provided a script to convert the input data from text format to binary format. We used their script (`text2bin`) to convert our edge graphs from text format to binary format. 
 
 Again, more details can be seen at [Graph Datasets Pre-processing](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) page.
 
