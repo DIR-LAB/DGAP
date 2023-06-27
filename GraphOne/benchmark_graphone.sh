@@ -8,7 +8,7 @@ echo 'data path: ' $DATA_PATH
 mkdir $PMEM_PATH/GraphOne/
 
 threads=1
-while [ $threads -le 2 ]
+while [ $threads -le 16 ]
 do
   export OMP_NUM_THREADS=$threads
   echo

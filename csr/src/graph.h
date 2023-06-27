@@ -164,8 +164,7 @@ public:
         fprintf(stderr, "[%s]: FATAL: pmemobj_open error: %s\n", __FUNCTION__, pmemobj_errormsg());
         exit(0);
       }
-    }
-    else {
+    } else {
       if ((pop = pmemobj_create(dbfilename, LAYOUT_NAME, DB_POOL_SIZE, CREATE_MODE_RW)) == NULL) {
         fprintf(stderr, "[%s]: FATAL: pmemobj_create error: %s\n", __FUNCTION__, pmemobj_errormsg());
         exit(0);
@@ -289,7 +288,7 @@ public:
   void PrintTopology() const {
     for (NodeID_ i = 0; i < bp->num_nodes_; i++) {
       std::cout << i << ": ";
-      for (DestID_ j : out_neigh(i)) {
+      for (DestID_ j: out_neigh(i)) {
         std::cout << j << " ";
       }
       std::cout << std::endl;
@@ -298,7 +297,7 @@ public:
 
   void PrintTopology(NodeID_ n) const {
     std::cout << n << ": ";
-    for (DestID_ j : out_neigh(n)) {
+    for (DestID_ j: out_neigh(n)) {
       std::cout << j << " ";
     }
     std::cout << std::endl;
@@ -307,7 +306,7 @@ public:
   static DestID_ **GenIndex(const pvector<SGOffset> &offsets, DestID_ *neighs) {
     NodeID_ length = offsets.size();
     DestID_ **index = new DestID_ *[length];
-    #pragma omp parallel for
+#pragma omp parallel for
     for (NodeID_ n = 0; n < length; n++)
       index[n] = neighs + offsets[n];
     return index;
