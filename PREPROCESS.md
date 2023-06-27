@@ -83,7 +83,7 @@ To help the users to prepare datasets to run tests on all the competitors, here 
 
 ```
 ## if the raw graph in edge graph format as input.el
-> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-inout-file]
+> ./split_dataset [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el [number-of-lines-in-input-file]
 
 ## if the raw graph in adjacency graph format as input.el
 > ./adj_to_el_converter [path-to-input-file]/input.el [path-to-base-graph-output-file]/output.base.el [path-to-dynamic-graph-output-file]/output.dynamic.el
