@@ -3,7 +3,7 @@
 
 This is the source code of DGAP, a framework for efficient dynamic graph analysis on persistent memory. You can learn more about this in our [SC 2023 paper (TBA)](#).
 
-This repo includes the source code of DGAP along with the competitor dynamic graph processing systems (LLAMA [2], GraphOne [3], and XP-Graph [4]) and data structures (CSR, and BAL) that we have used in our performance evaluation. It also includes PMDK (v1.12.1) with necessary changes required in DGAP (please check in [changes in PMDK](#changes-in-pmdk) for more details). Finally, it contains few sample datasets that we used in our experiments/tests.
+This repo includes the source code of DGAP along with other state-of-the-art dynamic graph processing systems (LLAMA [2], GraphOne [3], and XP-Graph [4]) and data structures (CSR, and BAL) that we compared with in our performance evaluation. It also includes PMDK (v1.12.1) with necessary changes required in DGAP (please check in [changes in PMDK](#changes-in-pmdk) for more details). Finally, it contains few sample datasets that we used in our experiments/tests.
 
 ## Citing DGAP:
 
