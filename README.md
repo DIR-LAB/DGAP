@@ -20,13 +20,15 @@ This repo includes the source code of DGAP along with other state-of-the-art dyn
 [//]: # (organization={ACM})
 
 ### Table of Contents
-**[What is DGAP?](#what-is-dgap)**<br>
-**[Quick Start](#quick-start)**<br>
-**[Design and Implementations](#design-and-implementation)**<br>
-**[Usage](#usage)**<br>
-**[Contribution](#contribution)**<br>
-**[Contact](#contact)**<br>
-**[Reference](#reference)**<br>
+- **[What is DGAP?](#what-is-dgap)**<br>
+- **[Directory Structure](#directory-structure)**<br>
+- **[Workflow](#workflow)**<br>
+    - **[1. Build Binaries](#build-binaries)**<br>
+    - **[2. Input Graph Datasets](#input-graph-datasets)**<br>
+    - **[3. Run the Benchmarks](#run-the-benchmarks)**<br>
+- **[Contribution](#contribution)**<br>
+- **[Contact](#contact)**<br>
+- **[Reference](#reference)**<br>
 
 ## What is DGAP?
 DGAP is a framework for efficient dynamic graph analysis on persistent memory. DGAP utilizes the existing PMA-based mutable Compressed Sparse Row (CSR) graph structure with extensive new designs for persistent memory. We demonstrate the benefits of DGAP in graph update and analysis by comparing it to state-of-the-art dynamic graph frameworks on persistent memory, such as XPGraph, LLAMA, and GraphOne.
