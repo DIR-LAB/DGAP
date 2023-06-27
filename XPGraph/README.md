@@ -1,205 +1,62 @@
 # XPGraph
 
-This respository is for following paper:
+This is the reference sourcecode of XPGraph that we [forked from here](https://github.com/ISCS-ZJU/XPGraph) [2].
 
-**MICRO'22 paper:** XPGraph: XPline-Friendly Persistent Memory Graph Stores for Large-Scale Evolving Graphs
+XPGraph [1] is a PM-based dynamic graph system.
+It is based on GraphOne but extends it with new designs for persistent memory.
+Specifically, XPGraph stores both the edge list and adjacency list in persistent memory to guarantee data persistence and leverages the DRAM as a cache to batch data into the adjacency list.
+Similar to GraphOne, XPGraph also transfers data to DRAM for graph analysis. In our evaluations, we use the default parameter settings of XPGraph for comparisons.
 
-## Abstract
+## Quick Start
 
-Traditional in-memory graph storage systems have limited
-scalability due to the limited capacity and volatility of DRAM.
-Emerging persistent memory (PMEM), with large capacity
-and non-volatility, provides us an opportunity to realize the
-scalable and high-performance graph stores. However, directly moving existing DRAM-based graph storage systems
-to PMEM would cause serious PMEM access inefficiency
-issues, including high read and write amplification in PMEM
-and costly remote PMEM accesses across NUMA nodes,
-thus leading to the performance bottleneck. 
-<!-- In this paper, -->
-We propose XPGraph, a PMEM-based graph storage system for managing large-scale evolving graphs, by developing
-an XPLine-friendly graph access model with vertex-centric
-graph buffering, hierarchical vertex buffer managing, and
-NUMA-friendly graph accessing. Experimental results show
-that XPGraph achieves 3.01× to 3.95× higher update performance, 
-as well as up to 4.46× higher query performance 
-compared with the state-of-the-art in-memory graph storage system
-implemented on a PMEM-based system.
+Build the project:
 
-## Try out XPGraph
-
-### Hardware requirements
-* Intel Optane Persistent Memory 200 Series.
-* Two processors configured in a non-uniform memory access (NUMA) architecture.
-
-### Compiling 
-
-Using the following commands, one can easily compile the `XPGraph`. 
-The generated libary file is located at `src/api/lib/libxpgraph.so`, 
-and the compiled executable file is located at `bin/main`. 
-
-```bash
-## Get source code
-$ git clone 
-$ cd XPGraph
-
-## Make libary file
+```
+## make libary file
 $ make lib
 
-## Set head file and LD_LIBRARY_PATH
+## set head file and LD_LIBRARY_PATH
 $ sudo cp ./src/api/libxpgraph.h /usr/include/
 $ export LD_LIBRARY_PATH=./src/api/lib/:$LD_LIBRARY_PATH
 
-## Make executable file
+## make executable file
 $ make main
-
-# ## Make all (libary and executable file)
-# $ make
 ```
 
-### Dataset preparing
+Insert Orkut graph and run different graph analysis:
 
-XPGraph provides interfaces to ingest graph data from edge list files of binary format. Typically, the downloaded datasets are edge list files of text format. For convenience, we provide a script to convert the input data from text format to binary format. Furthermore, the edges of some datasets are 
-ordered by source vertices, such as Twitter, UKDomain and YahooWeb used in our evaluaton. For better performance testing, we also provide a script to randomly shuffle these ordered datasets. If a dataset is too large to convert, you can use the `split` command to split it into multiple smaller text files.
-
-```bash
-## Split a large text file
-$ split -[splitline] [path_to_txt/data.txt]
-
-## Shuffle a ordered text file
-$ python preprocess/shuffle.py -i [path_to_txt/data.txt] -o [path_to_txt/data_shuffle.txt] -v [nverts]
-
-## Change to binary format
-$ cd preprocess
-$ g++ text2bin.cpp -o text2bin
-$ ./text2bin [path_to_txt/data.txt] [path_to_binary/data.bin]
+```
+> ./bin/main -f ${DATA_PATH}/xpgraph/orkut/ -p0 ${PMEM_PATH}/xpgraph-db/XPGraph0/ --recovery ${PMEM_PATH}/xpgraph-db/XPGraphRecovery/ --source 1 -v 3072627 -q 5 -j 2 -t $threads
 ```
 
-Additionally, we provide a script to randomly shuffle the input data in text format.
+Meaning of the command line flags:
++ `-f dir` read input graphs from directory dir
++ `-p0 dir` store the graph in directory dir
++ `--recovery dir` directory to store data used for recovery
++ `--source s` source vertex-id, start from node s
++ `-v n` there are n vertices in the graph
++ `-q q` run each graph analysis for q times
++ `-j j` perform j job (`2` for archive and running analysis)
++ `-t t` use t concurrent threads
 
-```bash
-$ python preprocess/shuffle.py -i [path_to_txt/data.txt] -o [path_to_txt/data_shuffle.txt] -v [nverts]
+## Graph Kernels Included
+For a fair comparison, we integrate the following graph algorithms from the GAP Benchmark Suite (GAPBS) into XPGraph.
++ Breadth-First Search (BFS) - direction optimizing
++ PageRank (PR) - iterative method in pull direction
++ Connected Components (CC) - Shiloach-Vishkin
++ Betweenness Centrality (BC) - Brandes
+
+## Executing the Benchmark
+
+We provide a script to automate executing the benchmark on all the input graphs we used in our paper. Before running the benchmark, please follow [this directory structure](TBA) to store the input graphs.
+
+__*Warning:*__ A full run of this benchmark might take a couple of hours to finish. If you want to skip some input files, please comment them in the [benchmark script](https://github.com/DIR-LAB/DGAP/blob/main/XPGraph/benchmark_xpgraph.sh).
+
+Execute the benchmark:
+```
+> ./benchmark_xpgraph.sh > xpgraph.out
 ```
 
-**Input Graph Data:** Edge list in binary format. 
-
-**Example1: LiveJournal (small graph for function test):**
-```bash
-## Download and unzip
-$ mkdir Dataset && cd Dataset
-$ mkdir LiveJournal && cd LiveJournal
-$ wget https://snap.stanford.edu/data/soc-LiveJournal1.txt.gz
-$ gunzip soc-LiveJournal1.txt.gz
-
-## Shuffle and change to binary format
-$ mkdir txt && mkdir bin
-$ python [preprocess_path]/shuffle.py -i soc-LiveJournal1.txt -o txt/soc-LiveJournal1_shuffle.txt -v 4847571
-$ [preprocess_path]/text2bin txt/soc-LiveJournal1.txt bin/soc-LiveJournal1.bin
-```
-
-**Example2: Friendster (Medium graph, one of our evaluation tested dataset):**
-```bash
-## Download and unzip
-$ mkdir Friendster && cd Friendster
-$ mkdir txt && cd txt
-$ wget http://konect.cc/files/download.tsv.friendster.tar.bz2 
-$ tar -jxvf friendster.tar.bz2
-
-## Change to binary format
-$ cd .. && mkdir bin
-$ [preprocess_path]/text2bin txt/out.friendster bin/friendster.bin
-```
-
-**Example3: Kron30 (Largest synthetic graph generated by graph500 generator):**
-```bash
-## Build graph500 
-## A valid MPI-3 library is required to compile this project
-$ git clone https://github.com/rwang067/graph500-3.0
-$ cd graph500-3.0/src
-$ make graph500_reference_bfs 
-
-## Generate Kron30
-$ mkdir Kron30 && mkdir Kron30/txt
-$ ./graph500_reference_bfs 30 16 Kron30/txt/kron30_16.txt
-
-## Change to binary format
-$ cd Kron30 && mkdir bin
-$ [preprocess_path]/text2bin txt/kron30_16.txt bin/kron30_16.bin
-```
-
-### Running
-
-**Arguments setup:**
-You can set up the arguments in the `src/config/args_config.hpp` file, 
-or use following command-line options.
-
-```bash
-./bin/main
-./exe options.
- -h: This message.
- -f: Input dataset file.
- -v: Vertex count.
- -e: Edge count need for import. Default: 0 for importing all edges in the dataset file.
- -j: Job id (0 for ingest, 1 for log, 2 for archive, 3 for recover). Default: 0.
- -r: Archive threshold for job2.
- -q: The number of executions for each graph query algorithm.
- -t: Thread count for buffering and flushing. Default: 16.
- -s: Sockets count. Default: 2.
- -p0: Path of pmem0 of NUMA node0.
- -p1: Path of pmem1 of NUMA node1.
- -numa: Implementation of numa optimization: 0 for closing NUMA optimization, 1 for out/in-graph based implementation, 2 for sub-graph based implementation. Default: 2.
- --elogsize: Bits of maximum number of edges in edge log. Default: 30 for 1 billion edges, i.e., edge size equals 8GB.
- --leveled_buf: 0 for fixed vertex buffer size setting, 1 for hierarchical vertex buffer size setting. Default: 1.
- --minvbuf: Minimum per-vertex buffer size in bytes. Default: 16.
- --maxvbuf: Maximum per-vertex buffer size in bytes, or fixed per-vertex buffer size when leveled_buf = 0. Default: 256.
- --mempool: 0 for malloc/free-based vertex buffer managing, 1 for memory pool based vertex buffer managing. Default: 1.
- --membulk: Memory bulk size in MegaBytes. Default: 16.
- --vbuf_pool: Total vertex buffer pool size threshold in GigaByte. Default: 16.
- --pblk_pools: Total persistent PMEM block pool size threshold in GigaByte. Default: 64.
- --battery: 1 for XPGraph-B by allowing overwritting buffered edges. Default: 0.
- --dram_only: 1 for XPGraph-D by storing all data structure in DRAM and set the per-vertex buffer size as fixed 64B. Default: 0.
- --persist: 1 for saving XPGraph information, used for recovery. Default: 1.
- --recovery: Path of recovery data.
-```
-**Example1: Ingest all edges in Friendster dataset by XPGraph, and then execute each implemanted graph algorithm one time.**
-
-```bash
-$ cd XPGraph
-$ ./bin/main -f ./Dataset/Friendster/bin -v 68349467 -j 0 -q 1 -p0 *path_to_pmem0*/XPGraphDB/ -p1 *path_to_pmem1*/XPGraphDB/ --vbuf_pool 16 pblk_pools 64
-```
-
-The key statistic data for graph updating would be recorded to `xpgraph_update.csv` file, e.g.
-```bash
-# [UpdateTimings]:ingest_time(s), archive_count, archive_time(classify+buffer), flush_all_time(s), make_graph_time(s), [Memory]:vbuf_pool_size,pblk_pool_size,
-[UpdateTimings]:70.6336,269,62.32(14.021+48.2983),8.34082,70.6738,[Memory]:6.85938,30(15+15),
-```
-
-The key statistic data for graph querying would be recorded to `xpgraph_query.csv` file, e.g.
-```bash
-# [QueryTimings]:time_1hop(s),time_2hop(s),time_bfs(s),time_pagerank(s)
-[QueryTimings]:2.43146,7.1138,4.18603,7.15367,
-```
-
-**Example2: Recover graph based on XPGraph data stored on pmem of last graph ingestion.**
-
-```bash
-$ cd XPGraph
-$ ./bin/main -j 3 -p0 *path_to_pmem0*/XPGraphDB/ -p1 *path_to_pmem1*/XPGraphDB/ --recovery *path_to_recovery*
-```
-
-The key statistic data would be recorded to `xpgraph_recover.csv` file, e.g.
-```bash
-# [RecoverTimings]:recover_time(load+recover),
-[RecoverTimings]:6.93418(3.18781+3.74637),
-```
-
-**Example3: Ingest all edges in Friendster dataset by XPGraph-D.**
-
-```bash
-$ cd XPGraph
-$ ./bin/main -f ./Dataset/Friendster/bin -v 68349467 -j 0 --dram_only 1 --vbuf_pool 16 pblk_pools 64
-```
-
-The key statistic data would be recorded to `xpgraph_update.csv` file, e.g.
-```bash
-# [UpdateTimings]:ingest_time(s), archive_count, archive_time(classify+buffer), flush_all_time(s), make_graph_time(s), [Memory]:vbuf_pool_size, pblk_pool_size,
-[UpdateTimings]:45.3881,185,45.4212(3.20862+42.2122),0,45.4302,[Memory]:7.29688,27.3594(13.4688+13.8906),
+## Reference
+1. Rui Wang, Shuibing He, Weixu Zong, Yongkun Li, and Yinlong Xu. 2022. XP-Graph: XPline-Friendly Persistent Memory Graph Stores for Large-Scale Evolving Graphs. In 2022 55th IEEE/ACM International Symposium on Microarchitecture (MICRO). IEEE, 1308–1325.
+2. Rui Wang. XPGraph. https://github.com/ISCS-ZJU/XPGraph. Accessed Mar. 31, 2023.
