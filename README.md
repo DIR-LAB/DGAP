@@ -5,7 +5,7 @@ This is the source code of DGAP, a framework for efficient dynamic graph analysi
 
 This repo includes the source code of DGAP along with other state-of-the-art dynamic graph processing systems (LLAMA [2], GraphOne [3], and XP-Graph [4]) and data structures (CSR, and BAL) that we compared with in our performance evaluation. It also includes PMDK (v1.12.1) with necessary changes required in DGAP (please check in [changes in PMDK](#changes-in-pmdk) for more details). Finally, it contains few sample datasets that we used in our experiments/tests.
 
-## 1. Citing DGAP:
+## Citing DGAP:
 
 ```
 @inproceedings{islam2023dgap,
@@ -28,12 +28,12 @@ This repo includes the source code of DGAP along with other state-of-the-art dyn
 **[Contact](#contact)**<br>
 **[Reference](#reference)**<br>
 
-## 2. What is DGAP?
+## What is DGAP?
 DGAP is a framework for efficient dynamic graph analysis on persistent memory. DGAP utilizes the existing PMA-based mutable Compressed Sparse Row (CSR) graph structure with extensive new designs for persistent memory. We demonstrate the benefits of DGAP in graph update and analysis by comparing it to state-of-the-art dynamic graph frameworks on persistent memory, such as XPGraph, LLAMA, and GraphOne.
 
 DGAP is implemented using the PMDK library. The core data structure is approximately [1,500 lines of C++ code](https://github.com/DIR-LAB/DGAP/blob/main/dgap/src/graph.h). We benchmark DGAP and all the competitors on six real-world graphs with synthetic graph insertion patterns. For a fair comparison, we integrate different graph algorithms from the GAP Benchmark Suite (GAPBS) into all the competitors. So, this artifact contains the competitors’ code along with the DGAP. The build/run command and benchmark scripts are also provided individually.
 
-## 3. Directory Structure
+## Directory Structure
 At the high level, DGAP repository structure looks like this:
 
 ```
@@ -48,7 +48,8 @@ At the high level, DGAP repository structure looks like this:
 └── XPGraph/    XP-Graph [4] implementation with graph algorithms from GAPBS [1]
 ```
 
-## 4. Build Binaries
+# Workflow
+## 1. Build Binaries
 The code has been implemented in C++ and tested on Ubuntu 20.04 with CMake 3.13.4 and gcc 9.4.0.
 
 ### Software Prerequisites
@@ -141,7 +142,7 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 [//]: # (* Blocked Adjacency List &#40;BAL&#41;: Fixed number of edges &#40;e.g., 512 edges in our case&#41; stored per block.)
 [//]: # (* [Packed CSR &#40;PCSR&#41;]&#40;https://github.com/wheatman/Packed-Compressed-Sparse-Row&#41; [1]: Another mutable CSR format that also leverages PMA.)
 
-## 5. Input Graph Datasets
+## 2. Input Graph Datasets
 
 DGAP provides interfaces to ingest graph data from edge list files. In the paper, we reported DGAP’s performance on the following six input graphs:
 1. [Orkut](https://snap.stanford.edu/data/com-Orkut.html)
@@ -244,11 +245,11 @@ XPGraph expects edge graph files in binary format. The authors of XPGraph provid
 > ./text2bin [path-to-input-text-file]/data.el [path-to-output-binary-file]/data.bin
 ```
 
-## 6. Run the Benchmarks
+## 3. Run the Benchmarks
 
 One of the key motivations of this project is to allow others to reuse our DGAP implementation for performance comparison. We provide detailed build and run instructions for DGAP and all the competitors in the corresponding sub-directories. Before running the benchmark, please follow [this directory structure](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) to store the input graphs. Then, run `benchmark_xxx.sh` scripts in each directory to reproduce the results of DGAP and all the competitors.
 
-## 7. Contribution
+## Contribution
 
 If you would like to contribute to this project, we would certainly appreciate your help! Here are some of the ways you can contribute:
 
@@ -258,11 +259,11 @@ If you would like to contribute to this project, we would certainly appreciate y
 
 Our future goal is to provide a set of portable, high-performance data structure baselines for dynamic graphs. For code contributions, please focus on code simplicity and readability. If you open a pull request, we will do a quick sanity check and respond to you as soon as possible.
 
-## 8. Contact
+## Contact
 * [Abdullah Al Raqibul Islam (UNC Charlotte)](http://biqar.github.io)
 * [Dong Dai (UNC Charlotte)](http://daidong.github.io)
 
-## 9. Reference
+## Reference
 1. Scott Beamer. GAP Benchmark Suite. https://github.com/sbeamer/gapbs. Accessed July. 30, 2021.
 2. Peter Macko, Virendra J Marathe, Daniel W Margo, and Margo I Seltzer. 2015. Llama: Efficient graph analytics using large multiversioned arrays. In 2015 IEEE 31st International Conference on Data Engineering. IEEE, 363–374.
 3. Pradeep Kumar and H Howie Huang. 2019. Graphone: A data store for real-time analytics on evolving graphs. In 17th {USENIX} Conference on File and Storage Technologies ({FAST} 19). 249–263.
