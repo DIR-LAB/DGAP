@@ -2,7 +2,7 @@
 
 This is the reference implementation of our proposed framework DGAP in persistent memory.
 Current DGAP implementation is based on PMDK 1.12 (we use the PMDK library only for memory management/allocation purposes).
-Before running DGAP on larger datasets, Please [check these instructions](TBA) to install PMDK from [our provided source](https://github.com/DIR-LAB/DGAP/tree/main/pmdk).
+Before running DGAP on larger datasets, Please [check these instructions](https://github.com/DIR-LAB/DGAP/blob/main/README.md#changes-in-pmdk) to install PMDK from [our provided source](https://github.com/DIR-LAB/DGAP/tree/main/pmdk).
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 
 ## Executing the Benchmark
 
-We provide a script to automate executing the benchmark on all the input graphs we used in our paper. Before running the benchmark, please follow [this directory structure](TBA) to store the input graphs.
+We provide a script to automate executing the benchmark on all the input graphs we used in our paper. Before running the benchmark, please follow [this directory structure](https://github.com/DIR-LAB/DGAP/blob/main/PREPROCESS.md) to store the input graphs.
 
 __*Warning:*__ A full run of this benchmark might take a couple of hours to finish. If you want to skip some input files, please comment them in the [benchmark script](https://github.com/DIR-LAB/DGAP/blob/main/dgap/benchmark_dgap.sh).
 

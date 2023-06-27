@@ -102,13 +102,13 @@ Installing PMDK using our source repository:
 > git clone https://github.com/DIR-LAB/DGAP.git
 ```
 
-**Step 2:** Download and preprocess the datasets by following [these instructions](#prepare-datasets).
-
-**Step 3:** Set the `PMEM_PATH` and `DATA_PATH` to link the root directory of PMEM and input graph data respectively. Example:
+**Step 2:** Set the `PMEM_PATH` and `DATA_PATH` to link the root directory of PMEM and input graph data respectively. Example:
 ```
 > export PMEM_PATH=/mnt/pmem
 > export DATA_PATH=DGAP/data
 ```
+
+**Step 3:** Download and preprocess the datasets by following [these instructions](#prepare-datasets).
 
 **Step 4:** To build and run test on DGAP or any of the competitors, please follow instructions included in the corresponding sub-directories:
 
@@ -144,12 +144,12 @@ For a fair comparison, we integrate the following graph algorithms from the GAP 
 ## Input Graph Data
 
 DGAP provides interfaces to ingest graph data from edge list files. In the paper, we reported DGAP’s performance on the following six input graphs:
-1. [Orkut]()
-2. [LiveJournal]()
-3. [CitPatents]()
-4. [Twitter]()
-5. [Friendster]()
-6. [Protein]()
+1. [Orkut](https://snap.stanford.edu/data/com-Orkut.html)
+2. [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html)
+3. [CitPatents](https://snap.stanford.edu/data/cit-Patents.html)
+4. [Twitter](https://github.com/ANLAB-KAIST/traces/releases/tag/twitter_rv.net)
+5. [Friendster](https://snap.stanford.edu/data/com-Friendster.html)
+6. [Protein](https://www.dropbox.com/scl/fi/kx883cz7d5w8p8n346nr0/protein.adj?dl=0&rlkey=6voyszorfex9lrb2edja4w65y)
 
 ### Graph Properties
 * **Direction of the graph:** Currently DGAP and all the competitors only store the out-going edges of the graph. Few graph algorithms implemented in the [GAP Benchmark Suite (GAPBS)](https://github.com/sbeamer/gapbs) expect to access both the in and out-going edges.
